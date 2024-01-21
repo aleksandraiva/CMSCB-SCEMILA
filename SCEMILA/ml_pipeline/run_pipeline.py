@@ -19,10 +19,14 @@ torch.multiprocessing.set_sharing_strategy('file_system')
 
 # 1: Setup. Source Folder is parent folder for both mll_data_master and
 # the /data folder
+#Normal Scemila
 # results will be stored here
-TARGET_FOLDER = r'/mnt/c/Users/Hillary Hauger/Documents/Studium/WS23-24/Computational Methods for Single-cell Biology/smalldataset/data/output'
+#TARGET_FOLDER = r'/mnt/c/Users/Hillary Hauger/Documents/Studium/WS23-24/Computational Methods for Single-cell Biology/smalldataset/data/output'
 # path to dataset
-SOURCE_FOLDER = r'/mnt/c/Users/Hillary Hauger/Documents/Studium/WS23-24/Computational Methods for Single-cell Biology/smalldataset'
+#SOURCE_FOLDER = r'/mnt/c/Users/Hillary Hauger/Documents/Studium/WS23-24/Computational Methods for Single-cell Biology/smalldataset'
+#Random shuffe: Experiment 1
+TARGET_FOLDER = r'/mnt/c/Users/Hillary Hauger/Documents/Studium/WS23-24/Computational Methods for Single-cell Biology/artificialdata/experiment_1/data/output'
+SOURCE_FOLDER = r'/mnt/c/Users/Hillary Hauger/Documents/Studium/WS23-24/Computational Methods for Single-cell Biology/artificialdata/experiment_1'
 
 # get arguments from parser, set up folder
 # parse arguments
