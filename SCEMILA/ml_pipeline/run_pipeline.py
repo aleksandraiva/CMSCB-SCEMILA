@@ -20,9 +20,9 @@ torch.multiprocessing.set_sharing_strategy('file_system')
 # 1: Setup. Source Folder is parent folder for both mll_data_master and
 # the /data folder
 # results will be stored here
-TARGET_FOLDER = r'C:\Science\TCIA Data\output'
+TARGET_FOLDER = r'/mnt/c/Users/Hillary Hauger/Documents/Studium/WS23-24/Computational Methods for Single-cell Biology/smalldataset/data/output'
 # path to dataset
-SOURCE_FOLDER = r'C:\Science\TCIA Data\TCIA_data_prepared'
+SOURCE_FOLDER = r'/mnt/c/Users/Hillary Hauger/Documents/Studium/WS23-24/Computational Methods for Single-cell Biology/smalldataset'
 
 # get arguments from parser, set up folder
 # parse arguments
@@ -180,7 +180,8 @@ print("")
 # initialize model, GPU link, training
 
 # set up GPU link and model (check for multi GPU setup)
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+#device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device="cpu"
 ngpu = torch.cuda.device_count()
 print("Found device: ", ngpu, "x ", device)
 
