@@ -81,12 +81,13 @@ class ModelTrainer:
         - backprop_every: only apply backpropagation every n patients. Allows for gradient accumulation over
           multiple patients, like in batch processing in a regular neural network.'''
 
-        if(split == 'train'):
+        '''if(split == 'train'):
             backpropagation = True
             self.model.train()
         else:
             backpropagation = False
-            self.model.eval()
+            # self.model.eval()
+            self.model.train()'''
 
         # initialize data structures to store results
         corrects = 0
@@ -107,8 +108,17 @@ class ModelTrainer:
             bag = bag.to(self.device)
 
             # forward pass
-            prediction, att_raw, att_softmax, bag_feature_stack = self.model(
-                bag)
+            if(split == 'train'):
+                backpropagation = True
+                self.model.train()
+                prediction, att_raw, att_softmax, bag_feature_stack = self.model(
+                    bag)
+            else:
+                backpropagation = False
+                self.model.train()
+                with torch.no_grad():
+                    prediction, att_raw, att_softmax, bag_feature_stack = self.model(
+                    bag)
 
             # calculate and store loss
             # loss_func = nn.BCELoss()
