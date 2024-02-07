@@ -25,8 +25,8 @@ torch.multiprocessing.set_sharing_strategy('file_system')
 # path to dataset
 #SOURCE_FOLDER = r'/mnt/c/Users/Hillary Hauger/Documents/Studium/WS23-24/Computational Methods for Single-cell Biology/smalldataset'
 #Random shuffe: Experiment 1
-TARGET_FOLDER = r'/mnt/c/Users/Hillary Hauger/Documents/Studium/WS23-24/Computational Methods for Single-cell Biology/artificialdata/experiment_1/data/output'
-SOURCE_FOLDER = r'/mnt/c/Users/Hillary Hauger/Documents/Studium/WS23-24/Computational Methods for Single-cell Biology/artificialdata/experiment_1'
+TARGET_FOLDER = '/Users/aleksandraivanova/Desktop/CMSCB/target'
+SOURCE_FOLDER = '/Users/aleksandraivanova/Desktop/CMSCB/data'
 
 # get arguments from parser, set up folder
 # parse arguments
@@ -47,7 +47,7 @@ parser.add_argument(
     '--ep',
     help='max. amount after which training should stop',
     required=False,
-    default=150)               # epochs to train
+    default=2)               # epochs to train
 parser.add_argument(
     '--es',
     help='early stopping if no decrease in loss for x epochs',
@@ -109,7 +109,7 @@ print('Initialize datasets...')
 label_conv_obj = label_converter.LabelConverter()
 set_dataset_path(SOURCE_FOLDER)
 define_dataset(
-    num_folds=5,
+    num_folds=4,
     prefix_in=args.prefix,
     label_converter_in=label_conv_obj,
     filter_diff_count=int(
@@ -119,10 +119,12 @@ define_dataset(
 datasets = {}
 
 # set up folds for cross validation
-folds = {'train': np.array([0, 1, 2]), 'val': np.array([
-    3]), 'test': np.array([4])}
+folds = {'train': np.array([0, 1, 2,3]), 'val': np.array([
+    3])}
+'''{'train': np.array([0, 1, 2,3]), 'val': np.array([
+    3]), 'test': np.array([4])}'''
 for name, fold in folds.items():
-    folds[name] = ((fold + int(args.fold)) % 5).tolist()
+    folds[name] = ((fold + int(args.fold)) % 4).tolist()
 
 datasets['train'] = MllDataset(
     folds=folds['train'],
@@ -134,10 +136,6 @@ datasets['val'] = MllDataset(
     folds=folds['val'],
     aug_im_order=False,
     split='val')
-datasets['test'] = MllDataset(
-    folds=folds['test'],
-    aug_im_order=False,
-    split='test')
 
 # store conversion from true string labels to artificial numbers for
 # one-hot encoding
@@ -176,7 +174,6 @@ dataloaders['train'] = DataLoader(
     sampler=sampler_train)
 dataloaders['val'] = DataLoader(
     datasets['val'])  # , sampler=sampler_val)
-dataloaders['test'] = DataLoader(datasets['test'])
 print("")
 
 
@@ -225,7 +222,7 @@ train_obj = ModelTrainer(
 model, conf_matrix, data_obj = train_obj.launch_training()
 
 
-# 4: aftermath
+'''# 4: aftermath
 # save confusion matrix from test set, all the data , model, print parameters
 
 np.save(os.path.join(TARGET_FOLDER, 'test_conf_matrix.npy'), conf_matrix)
@@ -235,7 +232,7 @@ pickle.dump(
         os.path.join(
             TARGET_FOLDER,
             'testing_data.pkl'),
-        "wb"))
+        "wb"))'''
 
 if(int(args.save_model)):
     torch.save(model, os.path.join(TARGET_FOLDER, 'model.pt'))
