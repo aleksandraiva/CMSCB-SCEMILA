@@ -20,10 +20,9 @@ torch.multiprocessing.set_sharing_strategy('file_system')
 # 1: Setup. Source Folder is parent folder for both mll_data_master and
 # the /data folder
 # results will be stored here
-TARGET_FOLDER = "/mnt/volume/shared/all_results/exp3_debug"
+TARGET_FOLDER = "/mnt/volume/shared/exp1"
 # path to dataset
-SOURCE_FOLDER = '/mnt/volume/shared/data_file/artificialdata/experiment_3_seed0_41'
-
+SOURCE_FOLDER = '/mnt/volume/shared/data_file/artificialdata/experiment_1'
 
 # get arguments from parser, set up folder
 # parse arguments
@@ -67,7 +66,7 @@ parser.add_argument(
 parser.add_argument(
     '--filter_diff',
     help='Filters AML patients with less than this perc. of MYB.',
-    default=-1) #previously set to 20 
+    default=20)
 # Leave out some more samples, if we have enough without them. Quality of
 # these is not good, but if data is short, still ok.
 parser.add_argument(
@@ -160,24 +159,7 @@ dataloaders = {}
 
 # ensure balanced sampling
 # get total sample sizes
-#exp0
-class_sizes = [26, 48, 29, 19, 30]
-#exp1
-#class_sizes = [36, 29, 33, 29, 35]
-#exp2
-#class_sizes = [41, 41, 41, 41, 41]
-#exp3
-#class_sizes = [41, 41, 41, 41, 41]
-#mixed10
-#class_sizes = [29, 53, 32, 21, 33]
-#mixed20
-#class_sizes = [32, 60, 36, 24, 38]
-#mixed30
-#class_sizes = [37, 69, 41, 27, 43]
-#mixed40
-#class_sizes = [43, 80, 48, 33, 50]
-#mixed50
-#class_sizes = [52, 96, 58, 38, 60]
+class_sizes = [32, 60, 36, 24, 37]
 # calculate label frequencies
 label_freq = [class_sizes[c] / sum(class_sizes) for c in range(class_count)]
 # balance sampling frequencies for equal sampling

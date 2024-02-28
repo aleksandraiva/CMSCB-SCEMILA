@@ -1,0 +1,5 @@
+*.svg
+*.png
+*.gzip
+*.pkl
+!analysis/suppl_data/color_scheme.pkl

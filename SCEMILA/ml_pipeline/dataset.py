@@ -65,7 +65,7 @@ def define_dataset(
     prefix = prefix_in
     label_conv_obj = label_converter_in
 
-    # load patient data
+    # load patient data)
     df_data_master = pd.read_csv(
         '{}/metadata.csv'.format(path_data)).set_index('patient_id')
 
@@ -122,7 +122,6 @@ def define_dataset(
 
     # split dataset
     dataset_defined = True
-    print(f"filepaths: {merge_dict_processed}")
     data_split.split_in_folds(merge_dict_processed, num_folds)
     print("Data filtering complete.")
     print("")
@@ -145,7 +144,7 @@ class MllDataset(Dataset):
                 9 for test
         - aug_im_order: if True, images in a bag are shuffled each time during loading
         - split: store information about the split within object'''
-        print(f"folds: {folds}")
+
         if(not dataset_defined):
             raise NameError(
                 'No dataset defined. Use define_dataset before initializing dataset class')
@@ -154,7 +153,6 @@ class MllDataset(Dataset):
 
         # grab data split for corresponding folds
         self.data = data_split.return_folds(folds)
-        #print(f"data: {self.data}")
         self.paths, self.labels = [], []
 
         # reduce the hard drive burden by storing features in a dictionary in
@@ -163,7 +161,6 @@ class MllDataset(Dataset):
 
         # enter paths and corresponding labels in self.data
         for key, val in self.data.items():
-            print(f"key: {key}, val: {val}")
             if patient_bootstrap_exclude is not None:
                 if(0 <= patient_bootstrap_exclude < len(val)):
                     path_excluded = val.pop(patient_bootstrap_exclude)

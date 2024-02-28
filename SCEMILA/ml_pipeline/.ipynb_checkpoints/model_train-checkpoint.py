@@ -32,7 +32,7 @@ class ModelTrainer:
         self.class_count = class_count
         self.early_stop = early_stop
         self.device = device
-            
+
     def launch_training(self):
         '''initializes training process.'''
 
@@ -81,18 +81,12 @@ class ModelTrainer:
         - backprop_every: only apply backpropagation every n patients. Allows for gradient accumulation over
           multiple patients, like in batch processing in a regular neural network.'''
 
-        # Define the function to apply dropout during testing
-        def apply_dropout(m):
-            if isinstance(m, nn.Dropout):
-                m.train()
-            
         if(split == 'train'):
             backpropagation = True
             self.model.train()
         else:
             backpropagation = False
             self.model.eval()
-            self.model.apply(apply_dropout)
 
         # initialize data structures to store results
         corrects = 0
@@ -160,7 +154,7 @@ class ModelTrainer:
                 corrects += 1
             confusion_matrix[label_groundtruth, label_prediction] += int(1)
 
-            # print('----- loss: {:.3f}, gt: {} , pred: {}, prob: {}'.format(loss_out, label_groundtruth, label_prediction,   prediction.detach().cpu().numpy()))
+            # print('----- loss: {:.3f}, gt: {} , pred: {}, prob: {}'.format(loss_out, label_groundtruth, label_prediction, prediction.detach().cpu().numpy()))
 
         samples = len(self.dataloaders[split])
         train_loss /= samples

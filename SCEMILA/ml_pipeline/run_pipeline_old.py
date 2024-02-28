@@ -19,14 +19,10 @@ torch.multiprocessing.set_sharing_strategy('file_system')
 
 # 1: Setup. Source Folder is parent folder for both mll_data_master and
 # the /data folder
-#Normal Scemila
 # results will be stored here
-#TARGET_FOLDER = r'/mnt/c/Users/Hillary Hauger/Documents/Studium/WS23-24/Computational Methods for Single-cell Biology/smalldataset/data/output'
+TARGET_FOLDER = "/mnt/volume/shared/test"
 # path to dataset
-#SOURCE_FOLDER = r'/mnt/c/Users/Hillary Hauger/Documents/Studium/WS23-24/Computational Methods for Single-cell Biology/smalldataset'
-#Random shuffe: Experiment 1
-TARGET_FOLDER = r'/mnt/c/Users/Hillary Hauger/Documents/Studium/WS23-24/Computational Methods for Single-cell Biology/artificialdata/experiment_1/data/output'
-SOURCE_FOLDER = r'/mnt/c/Users/Hillary Hauger/Documents/Studium/WS23-24/Computational Methods for Single-cell Biology/artificialdata/experiment_1'
+SOURCE_FOLDER = "/mnt/volume/shared/data_file"
 
 # get arguments from parser, set up folder
 # parse arguments
@@ -109,7 +105,7 @@ print('Initialize datasets...')
 label_conv_obj = label_converter.LabelConverter()
 set_dataset_path(SOURCE_FOLDER)
 define_dataset(
-    num_folds=5,
+    num_folds=4,
     prefix_in=args.prefix,
     label_converter_in=label_conv_obj,
     filter_diff_count=int(
@@ -120,9 +116,9 @@ datasets = {}
 
 # set up folds for cross validation
 folds = {'train': np.array([0, 1, 2]), 'val': np.array([
-    3]), 'test': np.array([4])}
+    3])}
 for name, fold in folds.items():
-    folds[name] = ((fold + int(args.fold)) % 5).tolist()
+    folds[name] = ((fold + int(args.fold)) % 4).tolist()
 
 datasets['train'] = MllDataset(
     folds=folds['train'],
@@ -134,10 +130,6 @@ datasets['val'] = MllDataset(
     folds=folds['val'],
     aug_im_order=False,
     split='val')
-datasets['test'] = MllDataset(
-    folds=folds['test'],
-    aug_im_order=False,
-    split='test')
 
 # store conversion from true string labels to artificial numbers for
 # one-hot encoding
@@ -176,7 +168,6 @@ dataloaders['train'] = DataLoader(
     sampler=sampler_train)
 dataloaders['val'] = DataLoader(
     datasets['val'])  # , sampler=sampler_val)
-dataloaders['test'] = DataLoader(datasets['test'])
 print("")
 
 
@@ -184,8 +175,7 @@ print("")
 # initialize model, GPU link, training
 
 # set up GPU link and model (check for multi GPU setup)
-#device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-device="cpu"
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 ngpu = torch.cuda.device_count()
 print("Found device: ", ngpu, "x ", device)
 
@@ -228,14 +218,14 @@ model, conf_matrix, data_obj = train_obj.launch_training()
 # 4: aftermath
 # save confusion matrix from test set, all the data , model, print parameters
 
-np.save(os.path.join(TARGET_FOLDER, 'test_conf_matrix.npy'), conf_matrix)
-pickle.dump(
-    data_obj,
-    open(
-        os.path.join(
-            TARGET_FOLDER,
-            'testing_data.pkl'),
-        "wb"))
+#np.save(os.path.join(TARGET_FOLDER, 'test_conf_matrix.npy'), conf_matrix)
+#pickle.dump(
+#    data_obj,
+#    open(
+#        os.path.join(
+#            TARGET_FOLDER,
+#            'testing_data.pkl'),
+#        "wb"))
 
 if(int(args.save_model)):
     torch.save(model, os.path.join(TARGET_FOLDER, 'model.pt'))
