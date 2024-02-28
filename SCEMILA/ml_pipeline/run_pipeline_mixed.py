@@ -15,7 +15,16 @@ import argparse as ap
 torch.multiprocessing.set_sharing_strategy('file_system')
 
 # import from other, own modules
-
+# get the number of patients in each class counts
+def get_class_sizes(folder,dictionary=None):
+    class_sizes = []
+    for i,class_label in enumerate(['PML_RARA','NPM1','CBFB_MYH11','RUNX1_RUNX1T1','control']):
+        if dictionary is None:
+            count = len(os.listdir(folder+"/"+class_label))
+            class_sizes.append(count)
+        else:
+            class_sizes.append(len(dictionary[class_label]))
+    return class_sizes
 
 # 1: Setup. Source Folder is parent folder for both mll_data_master and
 # the /data folder
@@ -124,7 +133,6 @@ folds = {'train': np.array([0, 1, 2]), 'val': np.array([
 for name, fold in folds.items():
     folds[name] = ((fold + int(args.fold)) % 4).tolist()
 
-print("train")
 datasets['train'] = MllDataset(
     folds=folds['train'],
     aug_im_order=True,
@@ -165,7 +173,7 @@ dataloaders = {}
 # ensure balanced sampling
 # get total sample sizes
 #exp0
-class_sizes = [26, 48, 29, 19, 30]
+class_sizes = get_class_sizes(SOURCE_FOLDER,mixed_data_filepaths)
 #exp1
 #class_sizes = [36, 29, 33, 29, 35]
 #exp2

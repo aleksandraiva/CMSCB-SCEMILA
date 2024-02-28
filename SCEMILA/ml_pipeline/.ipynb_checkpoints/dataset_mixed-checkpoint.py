@@ -48,7 +48,8 @@ def define_dataset(
         label_converter_in=None,
         filter_diff_count=-1,
         filter_quality_major_assessment=True,
-        filter_quality_minor_assessment=True):
+        filter_quality_minor_assessment=True,
+        merge_dict_processed=None):
     '''function needs to be called before constructing datasets. Gets an overview over the entire dataset, does filtering
     according to parameters / exclusion criteria, and splits the data automatically.
     - num_folds: split dataset into n folds
@@ -74,55 +75,39 @@ def define_dataset(
     print("")
 
     # iterate over all patients in the df_data_master sheet
-    merge_dict_processed = {}
-    for idx, row in df_data_master.iterrows():
+    if merge_dict_processed is None:
+        merge_dict_processed = {}
+        for idx, row in df_data_master.iterrows():
+    
+            # filter if patient has not enough malign cells (only if an AML patient)
+            # define filter criterion by which to filter the patients by annotation
+            annotations_exclude_by = [
+                'pb_myeloblast',
+                'pb_promyelocyte',
+                'pb_myelocyte']
+            annotation_count = sum(row[annotations_exclude_by])
+            if annotation_count < filter_diff_count and (
+                    not row['bag_label'] == 'control'):
+                print("Not enough malign cells, exclude: ", row.name,
+                      " with ", annotation_count, " malign cells ")
+                continue
+    
+            # enter patient into label converter
+            label = process_label(row)
+            if label is None:
+                continue
+    
+            # store patient for later loading
+            if label not in merge_dict_processed.keys():
 
-        # filter if patient has not enough malign cells (only if an AML patient)
-        # define filter criterion by which to filter the patients by annotation
-        annotations_exclude_by = [
-            'pb_myeloblast',
-            'pb_promyelocyte',
-            'pb_myelocyte']
-        annotation_count = sum(row[annotations_exclude_by])
-        if annotation_count < filter_diff_count and (
-                not row['bag_label'] == 'control'):
-            print("Not enough malign cells, exclude: ", row.name,
-                  " with ", annotation_count, " malign cells ")
-            continue
-
-        # # filter if manual assessment revealed major flaws. If this cell
-        # # contains N/A, then we don't exclude
-        # keep_row = pd.isnull(row['examine_exclude'])
-
-        # # filter if the patient has known bad sample quality
-        # if not keep_row and filter_quality_major_assessment:
-        #     print("Major flaws in slide quality, exclude: ", row.name, " ")
-        #     continue
-
-        # # filter if manual assessment revealed *minor* flaws. If this cell
-        # # contains N/A, then we don't exclude
-        # keep_row = pd.isnull(row['examine_optional_exclude'])
-
-        # # filter if the patient has known bad sample quality
-        # if not keep_row and filter_quality_minor_assessment:
-        #     print("Minor flaws in slide quality, exclude: ", row.name, " ")
-        #     continue
-
-        # enter patient into label converter
-        label = process_label(row)
-        if label is None:
-            continue
-
-        # store patient for later loading
-        if label not in merge_dict_processed.keys():
-            merge_dict_processed[label] = []
-        patient_path = os.path.join(
-            path_data, 'data', row['bag_label'], row.name)
-        merge_dict_processed[label].append(patient_path)
+                merge_dict_processed[label] = []
+            patient_path = os.path.join(
+                path_data, 'data', row['bag_label'], row.name)
+            merge_dict_processed[label].append(patient_path)
 
     # split dataset
     dataset_defined = True
-    print(f"filepaths: {merge_dict_processed}")
+    
     data_split.split_in_folds(merge_dict_processed, num_folds)
     print("Data filtering complete.")
     print("")
@@ -145,7 +130,7 @@ class MllDataset(Dataset):
                 9 for test
         - aug_im_order: if True, images in a bag are shuffled each time during loading
         - split: store information about the split within object'''
-        print(f"folds: {folds}")
+   
         if(not dataset_defined):
             raise NameError(
                 'No dataset defined. Use define_dataset before initializing dataset class')
@@ -154,7 +139,7 @@ class MllDataset(Dataset):
 
         # grab data split for corresponding folds
         self.data = data_split.return_folds(folds)
-        #print(f"data: {self.data}")
+
         self.paths, self.labels = [], []
 
         # reduce the hard drive burden by storing features in a dictionary in
@@ -163,7 +148,7 @@ class MllDataset(Dataset):
 
         # enter paths and corresponding labels in self.data
         for key, val in self.data.items():
-            print(f"key: {key}, val: {val}")
+
             if patient_bootstrap_exclude is not None:
                 if(0 <= patient_bootstrap_exclude < len(val)):
                     path_excluded = val.pop(patient_bootstrap_exclude)
