@@ -1,6 +1,6 @@
 from model_train import *   # model training function
 from model import *         # actual MIL model
-from dataset import *       # dataset
+from dataset_mixed import *       # dataset
 # makes conversion from string label to one-hot encoding easier
 import label_converter
 from torchvision import transforms
@@ -22,7 +22,7 @@ torch.multiprocessing.set_sharing_strategy('file_system')
 # results will be stored here
 TARGET_FOLDER = "/mnt/volume/shared/all_results/exp3_debug"
 # path to dataset
-SOURCE_FOLDER = '/mnt/volume/shared/data_file/artificialdata/experiment_3_seed0_41'
+SOURCE_FOLDER = '/mnt/volume/shared/data_file/mixeddata_debug/10_percent'
 
 
 # get arguments from parser, set up folder
@@ -103,6 +103,8 @@ start = time.time()
 # Initialize datasets, dataloaders, ...
 print("")
 print('Initialize datasets...')
+with open(SOURCE_FOLDER+'/file_paths.pkl', 'rb') as f:
+    mixed_data_filepaths = pickle.load(f)
 label_conv_obj = label_converter.LabelConverter(path_preload="/mnt/volume/shared/class_conversion.csv")
 set_dataset_path(SOURCE_FOLDER)
 define_dataset(
@@ -112,7 +114,8 @@ define_dataset(
     filter_diff_count=int(
         args.filter_diff),
     filter_quality_minor_assessment=int(
-        args.filter_mediocre_quality))
+        args.filter_mediocre_quality),
+    merge_dict_processed= mixed_data_filepaths)
 datasets = {}
 
 # set up folds for cross validation
@@ -121,6 +124,7 @@ folds = {'train': np.array([0, 1, 2]), 'val': np.array([
 for name, fold in folds.items():
     folds[name] = ((fold + int(args.fold)) % 4).tolist()
 
+print("train")
 datasets['train'] = MllDataset(
     folds=folds['train'],
     aug_im_order=True,
