@@ -90,7 +90,29 @@ parser.add_argument(
     help='choose wether model should be saved',
     required=False,
     default=1)                  # store model parameters if 1
+
+#Data and output folder
+parser.add_argument(
+    '--target_folder',
+    help='Target folder: where results are shaves',
+    required=True,
+    default="/mnt/volume/shared/all_results/debug") 
+
+#Data and output folder
+parser.add_argument(
+    '--source_folder',
+    help='Source folder: where data is stored',
+    required=True,
+    default='/mnt/volume/shared/data_file/data') 
+
+
 args = parser.parse_args()
+
+# the /data folder
+# results will be stored here
+TARGET_FOLDER = args.target_folder
+# path to dataset
+SOURCE_FOLDER = args.source_folder
 
 # store results in target folder
 TARGET_FOLDER = os.path.join(TARGET_FOLDER, args.result_folder)

@@ -29,9 +29,9 @@ def get_class_sizes(folder,dictionary=None):
 # 1: Setup. Source Folder is parent folder for both mll_data_master and
 # the /data folder
 # results will be stored here
-TARGET_FOLDER = "/mnt/volume/shared/all_results/exp3_debug"
+TARGET_FOLDER = "/mnt/volume/shared/all_results/mixed42_40"
 # path to dataset
-SOURCE_FOLDER = '/mnt/volume/shared/data_file/mixeddata_debug/10_percent'
+SOURCE_FOLDER = '/mnt/volume/shared/data_file/mixeddata_42/40_percent'
 
 
 # get arguments from parser, set up folder
@@ -76,7 +76,7 @@ parser.add_argument(
 parser.add_argument(
     '--filter_diff',
     help='Filters AML patients with less than this perc. of MYB.',
-    default=-1) #previously set to 20 
+    default=20) #previously set to 20 
 # Leave out some more samples, if we have enough without them. Quality of
 # these is not good, but if data is short, still ok.
 parser.add_argument(
@@ -99,7 +99,29 @@ parser.add_argument(
     help='choose wether model should be saved',
     required=False,
     default=1)                  # store model parameters if 1
+
+#Data and output folder
+parser.add_argument(
+    '--target_folder',
+    help='Target folder: where results are shaves',
+    required=True,
+    default="/mnt/volume/shared/all_results/debug") 
+
+#Data and output folder
+parser.add_argument(
+    '--source_folder',
+    help='Source folder: where data is stored',
+    required=True,
+    default='/mnt/volume/shared/data_file/data') 
+
+
 args = parser.parse_args()
+
+# the /data folder
+# results will be stored here
+TARGET_FOLDER = args.target_folder
+# path to dataset
+SOURCE_FOLDER = args.source_folder
 
 # store results in target folder
 TARGET_FOLDER = os.path.join(TARGET_FOLDER, args.result_folder)
