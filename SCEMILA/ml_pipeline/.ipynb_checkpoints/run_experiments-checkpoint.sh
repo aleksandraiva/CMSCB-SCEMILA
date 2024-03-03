@@ -5,7 +5,7 @@ result_folder="result_folder"
 
 # Define an array of source folders
 source_folders=(
-    "/mnt/volume/shared/data_file/artificialdata/experiment_3_seed1"
+    #"/mnt/volume/shared/data_file/artificialdata/experiment_3_seed1"
     "/mnt/volume/shared/data_file/artificialdata/experiment_3_seed20"
     "/mnt/volume/shared/data_file/artificialdata/experiment_3_seed42"
     # Add more source folders as needed
@@ -13,9 +13,9 @@ source_folders=(
 
 # Define an array of target folders
 target_folders=(
-    "/mnt/volume/shared/new_results/experiment_3_seed1"
+   # "/mnt/volume/shared/new_results/experiment_3_seed1"
     "/mnt/volume/shared/new_results/experiment_3_seed20"
-    "/mnt/volume/shared/new_results/experiment_3_seed20"
+    "/mnt/volume/shared/new_results/experiment_3_seed42"
     # Add more target folders as needed
 )
 
